@@ -1,0 +1,15 @@
+streamlit
+pandas
+```
+**Nota:** Dato che non usi altre librerie esterne complesse, solo `streamlit` e `pandas` dovrebbero bastare.
+
+### File 3: Cartella `ie_data_autonomous` (o gestione inline)
+
+Nel tuo codice, hai definito una cartella dati e salvato i dizionari lì.
+
+```python
+# CARTELLA DATI
+DATA_DIR = "ie_data_autonomous"
+os.makedirs(DATA_DIR, exist_ok=True)
+ROMANCE_FILE = os.path.join(DATA_DIR, "romance_to_latin.json")
+# ... e le funzioni load_dict/save_dict
