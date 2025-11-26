@@ -304,3 +304,22 @@ if word:
             st.write("-", v)
 st.markdown("---")
 st.caption("Progetto universitario — Traduttore comparativo basato su regole linguistiche storiche.")
+# ----------------------------
+# FUNZIONI PER INTERFACCIA UTENTE
+# ----------------------------
+def get_master_vocabulary():
+    """Raccoglie e ordina tutte le parole di input dai dizionari."""
+    vocab = set()
+    # Aggiungi parole dalle lingue romanze
+    for lang_dict in ROMANCE.values():
+        vocab.update(lang_dict.keys())
+    # Aggiungi parole dal greco
+    vocab.update(GREEK.keys())
+    # Aggiungi parole dalle lingue germaniche
+    for lang_dict in GERMANIC_GROUP.values():
+        vocab.update(lang_dict.keys())
+        
+    # La prima opzione deve essere vuota per la selezione
+    sorted_vocab = sorted(list(vocab))
+    sorted_vocab.insert(0, "— Seleziona una parola —")
+    return sorted_vocab
