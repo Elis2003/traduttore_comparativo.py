@@ -1,0 +1,25 @@
+{
+  "italian": {
+    "padre": "pater",
+    "madre": "mater",
+    "fratello": "frater",
+    "sorella": "soror",
+    "fuoco": "focus",
+    "luce": "lux",
+    "amore": "amor",
+    "albero": "arbor",
+    "papà": "pater",
+    "tavola": "mensa",
+    "mensa": "mensa",
+    "casa": "domus"
+  },
+  "spanish": {
+    "padre": "pater",
+    "madre": "mater",
+    "hermano": "frater",
+    "hermana": "soror",
+    "fuego": "focus",
+    "luz": "lux",
+    "amor": "amor"
+  }
+}
