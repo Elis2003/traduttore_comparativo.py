@@ -250,61 +250,107 @@ def comparative_reconstruction(word):
 # ----------------------------
 # STREAMLIT APP
 # ----------------------------
-st.set_page_config(page_title="Traduttore Glottologico Comparativo", page_icon="🌿", layout="wide")
-st.title("🌿 Traduttore Glottologico Comparativo")
+st.set_page_config(page_title="Traduttore Glottologico Comparativo", page_icon="🌎", layout="wide")
+st.title("🌎 Ricostruzione Indoeuropea")
 st.write("Sistema autonomo basato su regole glottologiche (Grimm, Verner, Ablaut, confronto interlinguistico).")
 
-word = st.text_input("Inserisci una parola:")
-lang = st.selectbox("Lingua di partenza", ["italian","spanish","latin","greek","old_english","modern_german"])
-compare = st.checkbox("Esegui ricostruzione comparativa automatica", value=False)
+# 1. Carica il vocabolario completo per il menu a tendina
+master_vocab = get_master_vocabulary()
+
+# 2. Crea il widget SelectBox per la selezione della parola
+selected_word = st.selectbox(
+    "Seleziona la parola da analizzare (da qualsiasi lingua):", 
+    master_vocab
+)
+
+# 3. Widget per la lingua di partenza e la comparazione
+lang = st.selectbox("Seleziona lingua di partenza (per analisi singola):", 
+                    ["italian","spanish","latin","greek","old_english","modern_german"])
+compare = st.checkbox("Esegui confronto tra rami", value=True) 
+
+# La variabile 'word' viene ora dalla selezione, solo se non è l'opzione vuota
+word = selected_word if selected_word != "— Seleziona una parola —" else ""
+
 
 if word:
     st.markdown("---")
 
-    if lang == "italian":
+    # --- Analisi Singola ---
+    pie, s1, s2, lat = "—", [], [], "—"
+
+    # Determina l'analisi da fare in base alla lingua selezionata
+    # Se la parola è presente nel dizionario della lingua selezionata, procede con l'analisi singola
+    
+    # 1. Trova la lingua in cui la parola è definita
+    # Se la parola selezionata è il corrispettivo di una delle lingue di input
+    found_lang = None
+    if word in ROMANCE.get(lang, {}):
+        found_lang = lang
+    elif lang in GERMANIC_GROUP and word in GERMANIC_GROUP[lang]:
+        found_lang = lang
+    elif lang == "greek" and word in GREEK:
+        found_lang = lang
+    elif lang == "latin" and word in LATIN_PIE:
+        found_lang = lang
+
+    # 2. Esegue l'analisi basata sulla lingua trovata (o la lingua selezionata se non si trova un match esatto)
+    if found_lang == "italian":
         lat, s1 = romance_to_latin(word, "italian")
         pie, s2 = latin_to_pie(lat)
-    elif lang == "spanish":
+    elif found_lang == "spanish":
         lat, s1 = romance_to_latin(word, "spanish")
         pie, s2 = latin_to_pie(lat)
-    elif lang == "latin":
+    elif found_lang == "latin":
         pie, s1 = latin_to_pie(word)
-        s2 = []
         lat = word
-    elif lang == "greek":
+    elif found_lang == "greek":
         pie, s1 = greek_to_pie(word)
-        s2 = []
         lat = GREEK.get(word, "—")
-    elif lang in GERMANIC_GROUP:
-        data = GERMANIC_GROUP[lang]
+    elif found_lang in GERMANIC_GROUP:
+        data = GERMANIC_GROUP[found_lang]
         lat = data.get(word, "—")
         pie, s1 = germanic_to_pie(word)
-        s2 = []
+    # Se la parola è stata selezionata ma non c'è un match esatto con la lingua di partenza, 
+    # esegue l'analisi base dall'italiano (per fallback)
     else:
-        pie, s1, s2, lat = "—", [], [], "—"
+        st.warning(f"La parola '{word}' non è un lemma di input diretto nella lingua selezionata '{lang}'. Eseguo analisi comparativa basata sul lemma.")
+        # Esegui l'analisi come se fosse dall'italiano per la comparazione
+        lat, _ = romance_to_latin(word, "italian")
+        pie, _ = latin_to_pie(lat)
+        s1 = [f"Analisi fallback: '{word}' trattata come forma base per comparazione."]
+        s2 = []
 
-    st.subheader("Risultato singolo:")
-    st.write(f"Latino: {lat}")
-    st.write(f"PIE ricostruito: {pie}")
-    st.subheader("Passaggi:")
-    for s in s1+s2: st.write("-", s)
 
-if word:
+    st.subheader("Risultati principali")
+    st.markdown(f"**Latino o equivalente:** {lat}")
+    st.markdown(f"**PIE ricostruito:** {pie}")
+    st.subheader("Per una spiegazione più dettagliata")
+    st.code(f"Latino→PIE: {pie}")
+    
+    st.caption("Passaggi di trasformazione:")
+    for s in s1+s2: st.code(s, language='markdown')
+
     st.markdown("---")
-    results, best = comparative_reconstruction(word)
-    df = pd.DataFrame(results, columns=["Lingua","Forma","PIE derivato"])
-    st.table(df)
+    
+    # --- Analisi Comparativa ---
+    if compare:
+        st.subheader("Confronto tra rami")
+        results, best = comparative_reconstruction(word)
+        df = pd.DataFrame(results, columns=["Ramo","Forma Latina/Equivalente","PIE"])
+        
+        st.dataframe(df, use_container_width=True)
 
-    if best:
-        st.success(f"**Ricostruzione PIE media suggerita:** {best}")
+        if best:
+            st.success(f"**Ricostruzione PIE MEDIA suggerita:** {best}")
 
-        variants = ablaut_variants(best)
-        st.markdown("### 📜 Varianti Ablaut PIE (e/o/Ø):")
-        for v in variants:
-            st.write("-", v)
+            variants = ablaut_variants(best)
+            st.markdown("### 📜 Varianti Ablaut PIE (e/o/Ø):")
+            cols = st.columns(len(variants))
+            for i, v in enumerate(variants):
+                cols[i].code(v)
+            
 st.markdown("---")
-st.caption("Progetto universitario — Traduttore comparativo basato su regole linguistiche storiche.")
-# ----------------------------
+st.caption("Progetto universitario — Traduttore glottologico comparativo basato su regole linguistiche storiche. La ricostruzione è basata su set di regole e dizionari limitati per scopi didattici.")# ----------------------------
 # FUNZIONI PER INTERFACCIA UTENTE
 # ----------------------------
 def get_master_vocabulary():
