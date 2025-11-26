@@ -351,8 +351,7 @@ if word:
             
 st.markdown("---")
 st.caption("Progetto universitario — Traduttore glottologico comparativo basato su regole linguistiche storiche. La ricostruzione è basata su set di regole e dizionari limitati per scopi didattici.")# ----------------------------
-# FUNZIONI PER INTERFACCIA UTENTE
-# ----------------------------
+
 def get_master_vocabulary():
     """Raccoglie e ordina tutte le parole di input dai dizionari."""
     vocab = set()
