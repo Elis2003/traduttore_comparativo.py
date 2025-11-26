@@ -303,4 +303,4 @@ if word:
         for v in variants:
             st.write("-", v)
 st.markdown("---")
-st.caption("Progetto universitario — Traduttore glottologico comparativo basato su regole linguistiche storiche.")
+st.caption("Progetto universitario — Traduttore comparativo basato su regole linguistiche storiche.")
