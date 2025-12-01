@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 IE Translator - Versione comparativa definitiva
-Autore: [Il tuo nome]
+
 Descrizione:
 Sistema glottologico autonomo che traduce tra lingue romanze, greco e germanico
 e ricostruisce la forma protoindoeuropea (PIE) usando metodo comparativo.
