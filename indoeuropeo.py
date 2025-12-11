@@ -12,7 +12,7 @@ import streamlit as st
 from collections import Counter
 
 # ----------------------------
-# 1. DATI E CONFIGURAZIONE
+# DATI E CONFIGURAZIONE
 # ----------------------------
 DATA_DIR = "ie_data_autonomous"
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -89,7 +89,7 @@ POKORNY_NOTES = {
 }
 
 # ----------------------------
-# 2. LOGICA E FUNZIONI
+#  LOGICA E FUNZIONI
 # ----------------------------
 def norm(s): return s.strip().lower()
 
@@ -145,7 +145,7 @@ def find_latin_key(word, lang):
     return key
 
 def reverse_lookup(dictionary, target_value):
-    """Trova la parola nella lingua target che corrisponde alla chiave latina"""
+    """Trova la parola nella lingua target che corrisponde alla chiave latina, ricorda che è la parte cruciale"""
     for k, v in dictionary.items():
         if v == target_value:
             return k
@@ -189,7 +189,7 @@ def build_comparative_table(latin_key):
     return results
 
 # ----------------------------
-# 3. INTERFACCIA 
+#  INTERFACCIA COME APPARE IL SITO
 # ----------------------------
 st.set_page_config(page_title="Traduttore Glottologico Comparativo", page_icon="🌿", layout="wide")
 st.title("🌿 Traduttore Glottologico Comparativo")
